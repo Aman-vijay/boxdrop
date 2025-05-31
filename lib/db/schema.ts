@@ -32,3 +32,18 @@ export const files = pgTable("files",{
 
     
 })
+
+export const fileRelations = relations(files,({one,many})=>({
+parent:one(files,{
+    fields:[files.parentId],
+    references:[files.id]
+
+})
+,
+
+//this is the relationship to child file/folder
+children:many(files)
+}))
+
+export const File = typeof files.$inferSelect
+export const NewFile = typeof files.$inferInsert
