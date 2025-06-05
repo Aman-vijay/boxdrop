@@ -8,10 +8,11 @@ import { useState } from "react"
 import {useRouter} from "next/navigation"
 import {Card, CardHeader, CardBody, CardFooter} from "@heroui/card";
 import {Divider} from "@heroui/divider";
+import {Input} from "@heroui/input";
 import {
   Mail,
   Lock,
-AlertCircle
+AlertCircle,
   CheckCircle,
   Eye,
   EyeOff,
@@ -104,13 +105,32 @@ export default function SignUpForm (){
 
             </CardHeader>
             <Divider/>
-            <CardBody>
+            <CardBody className="py-6">
                 {verificationError &&(
                     <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
                         <AlertCircle className="h-5 w-5 flex-shrink-0"/>
+                        <p>{verificationError}</p>
                     </div>
                 )}
             </CardBody>
+
+            <form onSubmit={handleVerification} className="space-y-6">
+                <div className="space-y-2">
+                    <label htmlFor = "verificationCode" className="text-sm font-medium text-default-900"
+                    > Verification Code
+                    </label>
+                    <Input 
+                    id="verificationCode" 
+                    type="text"
+                     placeholder="Type your 6 digit code"
+                     value={verificationCode}
+                     onChange ={(e)=>setVerificationCode(e.target.value)}
+                     className="w-full"
+                     autoFocus />
+
+                </div>
+
+            </form>
            </Card>
         )
     }
