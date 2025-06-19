@@ -154,7 +154,7 @@ export default function SignUpForm (){
             
           <div className="mt-6 text-center">
             <p className="text-sm text-default-500">
-              Didn't receive a code?{" "}
+              Did not receive a code?{" "}
               <button
                 onClick={async () => {
                   if (signUp) {
