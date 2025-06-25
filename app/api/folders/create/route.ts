@@ -10,15 +10,15 @@ export async function POST(request:NextRequest){
     try{
         const {userId} = await auth();
         if(!userId){
-            return new Response("Unauthorized", { status: 401 });
+            return new NextResponse("Unauthorized", { status: 401 });
         }
         const body = await request.json();
         const {name,userId:bodyUserId, parentId=null} = body;
         if(bodyUserId !== userId){
-            return new Response("Unauthorized", { status: 401 });
+            return new NextResponse("Unauthorized", { status: 401 });
         }
         if(!name || typeof name !== "string" || name.trim() === ""){
-            return new Response("Invalid request body", { status: 400 });
+            return new NextResponse("Invalid request body", { status: 400 });
         }
         //Check if parentId exists and is a valid folder
         if(parentId ){
@@ -28,7 +28,7 @@ export async function POST(request:NextRequest){
                 eq(files.isFolder, true)
             ));
  if(parentId && !parentFolder){
-            return new Response("Parent folder not found or unauthorized", { status: 404 });
+            return new NextResponse("Parent folder not found or unauthorized", { status: 404 });
         }
 
             }
@@ -62,7 +62,7 @@ export async function POST(request:NextRequest){
         }      
     catch(error){
         console.error("Error in POST /folders:", error);
-        return new Response("Internal Server Error", { status: 500 });
+        return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
 
