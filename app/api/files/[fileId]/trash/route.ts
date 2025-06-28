@@ -25,15 +25,19 @@ export  async function PATCH(request:NextRequest, props:{params:Promise<{fileId:
        if(!file){
         return NextResponse.json({error:"File is not found"},{status:404})
        }
-       const updatedFiles = await db.update(files).set({isTrash:!file.isTrash}).where(
+       const [updatedFile] = await db.update(files).set({isTrash:!file.isTrash}).where(
         and(
             eq(files.id,fileId),
             eq(files.userId,userId)
         )
        ).returning()
+       
+        const action = updatedFile.isTrash ? "moved to trash" : "restored";
 
-       const updatedFile = updatedFiles[0];
-       return NextResponse.json(updatedFile);
+       return NextResponse.json({
+      ...updatedFile,
+      message: `File ${action} successfully`,
+    });
 
     }
     catch(error){
