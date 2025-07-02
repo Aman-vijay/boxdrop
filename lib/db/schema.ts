@@ -1,5 +1,5 @@
-import {pgTable,uuid,text,integer,boolean,timestamp} from "drizzle-orm/pg-core"
-import { relations } from "drizzle-orm"
+import { pgTable, uuid, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 export const files = pgTable("files",{
     id:uuid("id").defaultRandom().primaryKey(),
@@ -45,5 +45,5 @@ parent:one(files,{
 children:many(files)
 }))
 
-export const File = typeof files.$inferSelect
-export const NewFile = typeof files.$inferInsert
+export type File = typeof files.$inferSelect;
+export type NewFile = typeof files.$inferInsert;
