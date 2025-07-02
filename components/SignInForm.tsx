@@ -1,98 +1,108 @@
-"use client"
-import {useSignIn} from "@clerk/nextjs"
-import {useRouter} from "next/navigation"
-import {useState} from "react"
-import {useForm} from "react-hook-form"
-import {z} from "zod"
-import {signInSchema} from "@/schemas/signInSchema"
-import {zodResolver} from "@hookform/resolvers/zod"
+"use client";
+
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useSignIn } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { z } from "zod";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import {Card, CardHeader, CardBody, CardFooter} from "@heroui/card";   
+import { Card, CardBody, CardHeader, CardFooter } from "@heroui/card";
 import { Divider } from "@heroui/divider";
-import {AlertCircle,Lock, Eye, EyeOff,MailIcon} from "lucide-react";
-import Link from "next/link";
-
+import { Mail, Lock, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { signInSchema } from "@/schemas/signInSchema";
 
 export default function SignInForm() {
-    const router = useRouter();
-    const {signIn, isLoaded,setActive} = useSignIn();
-    const [submitting, setSubmitting] = useState(false);
-    const [autherror, setAuthError] = useState<string | null>(null);
-    const [showPassword, setShowPassword] = useState(false);
-     const {
+  const router = useRouter();
+  const { signIn, isLoaded, setActive } = useSignIn();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const {
     register,
     handleSubmit,
-    formState: { errors },} = useForm<z.infer<typeof signInSchema>>({
+    formState: { errors },
+  } = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
       identifier: "",
       password: "",
     },
   });
-    const onSubmit = async (data: z.infer<typeof signInSchema>) => {
-        if(!isLoaded) return;
-        setSubmitting(true);
-        setAuthError(null);
-        try{
-            const signInAttempt = await signIn.create({
-                identifier: data.identifier,
-                password: data.password
-            })
-            if (signInAttempt.status === "complete") {
-                await setActive({session: signInAttempt.createdSessionId});
-                router.push("/dashboard");
-            }
-            else{
-                console.error("Sign in failed:", signInAttempt);
-                setAuthError("Sign in failed. Please check your credentials.");
-            }
-        }
-        catch (error:any) {
-            console.error("Sign in error:", error);
-            setAuthError(error.erros?.[0]?.message || "An unexpected error occurred. Please try again.");
-        }
-        finally {
-            setSubmitting(false);
-        }
+
+  const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+    if (!isLoaded) return;
+
+    setIsSubmitting(true);
+    setAuthError(null);
+
+    try {
+      const result = await signIn.create({
+        identifier: data.identifier,
+        password: data.password,
+      });
+
+      if (result.status === "complete") {
+        await setActive({ session: result.createdSessionId });
+        router.push("/dashboard");
+      } else {
+        console.error("Sign-in incomplete:", result);
+        setAuthError("Sign-in could not be completed. Please try again.");
+      }
+    } catch (error: any) {
+      console.error("Sign-in error:", error);
+      setAuthError(
+        error.errors?.[0]?.message ||
+          "An error occurred during sign-in. Please try again."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    return (
-       <Card className="w-full max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-       <CardHeader className="text-center flex flex-col gap-1 items-center">
-        <h1 className="text-2xl font-bold">Sign In</h1>
-        <p className="text-sm text-gray-500">Welcome back! Please sign in to your account.</p>
-        <p className="text-gray-500 text-sm text-center">
-            Sign in with your email and password to access your dashboard.
+  return (
+    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
+      <CardHeader className="flex flex-col gap-1 items-center pb-2">
+        <h1 className="text-2xl font-bold text-default-900">Welcome Back</h1>
+        <p className="text-default-500 text-center">
+          Sign in to access your secure cloud storage
         </p>
+      </CardHeader>
 
-       </CardHeader>
-       <Divider/>
-       <CardBody className="flex flex-col gap-4">
-        {autherror && (
-            <div className="text-red-500 text-sm mb-4">
-                <AlertCircle className="h-5 w-5 flex-shrink-0 inline mr-2" />
-                <p>{autherror}</p>
-            </div>
+      <Divider />
+
+      <CardBody className="py-6">
+        {authError && (
+          <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <p>{authError}</p>
+          </div>
         )}
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-                <label htmlFor="identifier" className="block text-sm font-medium text-gray-700">Email or Username</label>
-                <Input
-                    id="identifier"
-                    type="email"
-                    placeholder="Enter your email "
-                    startContent={<MailIcon className="h-5 w-5 text-gray-400" />}
-                    isInvalid={!!errors.identifier
 
-                    }
-                    errorMessage={errors.identifier?.message}
-                    {...register("identifier")}
-                    className="mt-1 block w-full"
-                    required
-                />
-            </div>
-            <div className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-2">
+            <label
+              htmlFor="identifier"
+              className="text-sm font-medium text-default-900"
+            >
+              Email
+            </label>
+            <Input
+              id="identifier"
+              type="email"
+              placeholder="your.email@example.com"
+              startContent={<Mail className="h-4 w-4 text-default-500" />}
+              isInvalid={!!errors.identifier}
+              errorMessage={errors.identifier?.message}
+              {...register("identifier")}
+              className="w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
             <div className="flex justify-between items-center">
               <label
                 htmlFor="password"
@@ -127,22 +137,23 @@ export default function SignInForm() {
               className="w-full"
             />
           </div>
-             <Button
+
+          <Button
             type="submit"
             color="primary"
             className="w-full"
-            isLoading={submitting}
+            isLoading={isSubmitting}
           >
-            {submitting ? "Signing in..." : "Sign In"}
+            {isSubmitting ? "Signing in..." : "Sign In"}
           </Button>
         </form>
-       </CardBody>
-        <Divider />
+      </CardBody>
 
-        
+      <Divider />
+
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
-          Don&apos;t have an account?{" "}
+          Don&#39;t have an account?{" "}
           <Link
             href="/sign-up"
             className="text-primary hover:underline font-medium"
@@ -151,8 +162,6 @@ export default function SignInForm() {
           </Link>
         </p>
       </CardFooter>
-
-       </Card>
-    )
-
+    </Card>
+  );
 }
