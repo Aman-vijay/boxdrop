@@ -52,7 +52,9 @@ export default function SignInForm() {
         console.error("Sign-in incomplete:", result);
         setAuthError("Sign-in could not be completed. Please try again.");
       }
-    } catch (error: any) {
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     catch (error: any) {
       console.error("Sign-in error:", error);
       setAuthError(
         error.errors?.[0]?.message ||

@@ -49,7 +49,9 @@ export default function SignUpForm() {
       });
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setVerifying(true);
-    } catch (error: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (error: any) {
       setError(error.errors?.[0]?.message || 'An error occurred during signup.');
     } finally {
       setIsSubmitting(false);
@@ -72,7 +74,9 @@ export default function SignUpForm() {
       } else {
         setError('Verification failed. Please check the code and try again.');
       }
-    } catch (error: any) {
+    } 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (error: any) {
       setError(error.errors?.[0]?.message || 'An error occurred during verification.');
     } finally {
       setIsSubmitting(false);
