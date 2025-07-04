@@ -16,7 +16,7 @@ const config = {
       colors: {
         // Define a cohesive palette
         background: {
-          DEFAULT: '#ffffff', // Light mode background
+          DEFAULT: '#1a1a1a', // Light mode background
           dark: '#1a1a1a', // Dark mode background
         },
         foreground: {
@@ -24,7 +24,7 @@ const config = {
           dark: '#e0e0e0', // Dark mode text
         },
         primary: {
-          DEFAULT: '#3b82f6', // Blue for buttons, accents
+          DEFAULT: '#1a1a1a', // Blue for buttons, accents
           dark: '#60a5fa', // Lighter blue for dark mode
         },
         secondary: {

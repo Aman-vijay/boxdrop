@@ -1,14 +1,38 @@
 @import 'tailwindcss';
 
-
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
+  /* Backgrounds */
+  --default-50: #f9fafb;
+  --default-100: #f3f4f6;
+  --default-200: #e5e7eb;
+  --default-600: #4b5563;
+  --default-900: #111827;
+
+  /* Text colors */
+  --primary: #6366f1;
+  --secondary: #ec4899;
+  --success: #10b981;
+  --warning: #f59e0b;
+
+  /* Foreground/Background */
+  --background: var(--default-50);
+  --foreground: var(--default-900);
 }
 
 .dark {
-  --background: #1a1a1a;
-  --foreground: #e0e0e0;
+  --default-50: #1f2937;
+  --default-100: #374151;
+  --default-200: #4b5563;
+  --default-600: #9ca3af;
+  --default-900: #f9fafb;
+
+  --primary: #8b5cf6;
+  --secondary: #f472b6;
+  --success: #34d399;
+  --warning: #fbbf24;
+
+  --background: var(--default-900);
+  --foreground: var(--default-50);
 }
 
 body {
@@ -17,7 +41,11 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Smooth transitions for HeroUI components */
 [data-heroui] {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
 }
