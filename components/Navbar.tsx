@@ -3,7 +3,7 @@
 import { useClerk, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { CloudUpload, ChevronDown, User, Menu, X } from "lucide-react";
+import { CloudUpload, ChevronDown, User, Menu, X, LogOut, Settings, Home } from "lucide-react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -129,27 +129,36 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <header
-      className={`bg-default-50 border-b border-default-200 sticky top-0 z-50 transition-shadow ${isScrolled ? "shadow-sm" : ""}`}
+      className={`bg-gray-950/80 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled ? "shadow-lg shadow-gray-900/20" : ""
+      }`}
     >
-      <div className="container mx-auto py-3 md:py-4 px-4 md:px-6">
+      <div className="container mx-auto py-4 px-4 md:px-6 max-w-7xl">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 z-10">
-            <CloudUpload className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">BoxDrop</h1>
+          <Link href="/" className="flex items-center gap-3 z-10 group">
+            <div className="bg-gradient-to-r from-indigo-500 to-pink-500 p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
+              <CloudUpload className="h-5 w-5 text-white" />
+            </div>
+            <h1 className="text-xl font-bold text-white">BoxDrop</h1>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-4 items-center">
+          <div className="hidden md:flex gap-3 items-center">
             {/* Show these buttons when user is signed out */}
             <SignedOut>
               <Link href="/sign-in">
-                <Button variant="flat" color="primary">
+                <Button 
+                  variant="bordered" 
+                  className="border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+                >
                   Sign In
                 </Button>
               </Link>
               <Link href="/sign-up">
-                <Button variant="solid" color="primary">
+                <Button 
+                  className="bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border-0"
+                >
                   Sign Up
                 </Button>
               </Link>
@@ -160,37 +169,56 @@ export default function Navbar({ user }: NavbarProps) {
               <div className="flex items-center gap-4">
                 {!isOnDashboard && (
                   <Link href="/dashboard">
-                    <Button variant="flat" color="primary">
+                    <Button 
+                      variant="bordered" 
+                      className="border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+                      startContent={<Home className="h-4 w-4" />}
+                    >
                       Dashboard
                     </Button>
                   </Link>
                 )}
-                <Dropdown>
+                <Dropdown
+                  classNames={{
+                    content: "bg-gray-900/95 backdrop-blur-lg border border-gray-700/50 shadow-xl",
+                  }}
+                >
                   <DropdownTrigger>
                     <Button
                       variant="flat"
-                      className="p-0 bg-transparent min-w-0"
-                      endContent={<ChevronDown className="h-4 w-4 ml-2" />}
+                      className="p-0 bg-gray-800/50 hover:bg-gray-700/50 min-w-0 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300"
+                      endContent={<ChevronDown className="h-4 w-4 ml-2 text-gray-400" />}
                     >
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3 px-3 py-2">
                         <Avatar
                           name={userDetails.initials}
                           size="sm"
                           src={user?.imageUrl || undefined}
-                          className="h-8 w-8 flex-shrink-0"
-                          fallback={<User className="h-4 w-4" />}
+                          className="h-8 w-8 flex-shrink-0 ring-2 ring-gray-600/50"
+                          fallback={
+                            <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
+                              <User className="h-4 w-4 text-white" />
+                            </div>
+                          }
                         />
-                        <span className="text-default-600 hidden sm:inline">
+                        <span className="text-gray-300 font-medium hidden sm:inline">
                           {userDetails.displayName}
                         </span>
                       </div>
                     </Button>
                   </DropdownTrigger>
-                  <DropdownMenu aria-label="User actions">
+                  <DropdownMenu 
+                    aria-label="User actions"
+                    classNames={{
+                      list: "p-2",
+                    }}
+                  >
                     <DropdownItem
                       key="profile"
                       description={userDetails.email || "View your profile"}
                       onClick={() => router.push("/dashboard?tab=profile")}
+                      startContent={<Settings className="h-4 w-4" />}
+                      className="text-gray-300 hover:bg-gray-800/50 rounded-lg data-[hover=true]:bg-gray-800/50"
                     >
                       Profile
                     </DropdownItem>
@@ -198,14 +226,16 @@ export default function Navbar({ user }: NavbarProps) {
                       key="files"
                       description="Manage your files"
                       onClick={() => router.push("/dashboard")}
+                      startContent={<Home className="h-4 w-4" />}
+                      className="text-gray-300 hover:bg-gray-800/50 rounded-lg data-[hover=true]:bg-gray-800/50"
                     >
                       My Files
                     </DropdownItem>
                     <DropdownItem
                       key="logout"
                       description="Sign out of your account"
-                      className="text-danger"
-                      color="danger"
+                      className="text-red-400 hover:bg-red-500/10 rounded-lg data-[hover=true]:bg-red-500/10"
+                      startContent={<LogOut className="h-4 w-4" />}
                       onClick={handleSignOut}
                     >
                       Sign Out
@@ -217,26 +247,30 @@ export default function Navbar({ user }: NavbarProps) {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-3">
             <SignedIn>
               <Avatar
                 name={userDetails.initials}
                 size="sm"
                 src={user?.imageUrl || undefined}
-                className="h-8 w-8 flex-shrink-0"
-                fallback={<User className="h-4 w-4" />}
+                className="h-8 w-8 flex-shrink-0 ring-2 ring-gray-600/50"
+                fallback={
+                  <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-white" />
+                  </div>
+                }
               />
             </SignedIn>
             <button
-              className="z-50 p-2"
+              className="z-50 p-2 hover:bg-gray-800/50 rounded-lg transition-colors duration-300"
               onClick={toggleMobileMenu}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               data-menu-button="true"
             >
               {isMobileMenuOpen ? (
-                <X className="h-6 w-6 text-default-700" />
+                <X className="h-6 w-6 text-gray-300" />
               ) : (
-                <Menu className="h-6 w-6 text-default-700" />
+                <Menu className="h-6 w-6 text-gray-300" />
               )}
             </button>
           </div>
@@ -244,7 +278,7 @@ export default function Navbar({ user }: NavbarProps) {
           {/* Mobile Menu Overlay */}
           {isMobileMenuOpen && (
             <div
-              className="fixed inset-0 bg-black/20 z-40 md:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
               aria-hidden="true"
             />
@@ -253,7 +287,7 @@ export default function Navbar({ user }: NavbarProps) {
           {/* Mobile Menu */}
           <div
             ref={mobileMenuRef}
-            className={`fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-default-50 z-40 flex flex-col pt-20 px-6 shadow-xl transition-transform duration-300 ease-in-out ${
+            className={`fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-gray-900/95 backdrop-blur-xl border-l border-gray-800/50 z-40 flex flex-col pt-20 px-6 shadow-2xl transition-transform duration-300 ease-in-out ${
               isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
             } md:hidden`}
           >
@@ -264,7 +298,10 @@ export default function Navbar({ user }: NavbarProps) {
                   className="w-full"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Button variant="flat" color="primary" className="w-full">
+                  <Button 
+                    variant="bordered" 
+                    className="w-full border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+                  >
                     Sign In
                   </Button>
                 </Link>
@@ -273,7 +310,9 @@ export default function Navbar({ user }: NavbarProps) {
                   className="w-full"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Button variant="solid" color="primary" className="w-full">
+                  <Button 
+                    className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 border-0"
+                  >
                     Sign Up
                   </Button>
                 </Link>
@@ -283,47 +322,54 @@ export default function Navbar({ user }: NavbarProps) {
             <SignedIn>
               <div className="flex flex-col gap-6">
                 {/* User info */}
-                <div className="flex items-center gap-3 py-4 border-b border-default-200">
+                <div className="flex items-center gap-4 py-6 border-b border-gray-800/50">
                   <Avatar
                     name={userDetails.initials}
                     size="md"
                     src={user?.imageUrl || undefined}
-                    className="h-10 w-10 flex-shrink-0"
-                    fallback={<User className="h-5 w-5" />}
+                    className="h-12 w-12 flex-shrink-0 ring-2 ring-gray-600/50"
+                    fallback={
+                      <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
+                        <User className="h-6 w-6 text-white" />
+                      </div>
+                    }
                   />
                   <div>
-                    <p className="font-medium">{userDetails.displayName}</p>
-                    <p className="text-sm text-default-500">
+                    <p className="font-semibold text-white">{userDetails.displayName}</p>
+                    <p className="text-sm text-gray-400">
                       {userDetails.email}
                     </p>
                   </div>
                 </div>
 
                 {/* Navigation links */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2">
                   {!isOnDashboard && (
                     <Link
                       href="/dashboard"
-                      className="py-2 px-3 hover:bg-default-100 rounded-md transition-colors"
+                      className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
+                      <Home className="h-5 w-5" />
                       Dashboard
                     </Link>
                   )}
                   <Link
                     href="/dashboard?tab=profile"
-                    className="py-2 px-3 hover:bg-default-100 rounded-md transition-colors"
+                    className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    <Settings className="h-5 w-5" />
                     Profile
                   </Link>
                   <button
-                    className="py-2 px-3 text-left text-danger hover:bg-danger-50 rounded-md transition-colors mt-4"
+                    className="flex items-center gap-3 py-3 px-4 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-300 mt-4"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       handleSignOut();
                     }}
                   >
+                    <LogOut className="h-5 w-5" />
                     Sign Out
                   </button>
                 </div>
