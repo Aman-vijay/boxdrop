@@ -66,19 +66,20 @@ export default function SignInForm() {
   };
 
   return (
-    <Card className="w-full max-w-md border border-default-200 bg-default-50 shadow-xl">
-      <CardHeader className="flex flex-col gap-1 items-center pb-2">
+    <Card className="w-full max-w-md mx-auto bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl shadow-xl hover:shadow-indigo-500/10 backdrop-blur-sm transition-all duration-300">
+      <CardHeader className="flex flex-col gap-2 items-center pb-4">
+     
         <h1 className="text-2xl font-bold text-default-900">Welcome Back</h1>
-        <p className="text-default-500 text-center">
+        <p className="text-gray-400 text-center text-sm">
           Sign in to access your secure cloud storage
         </p>
       </CardHeader>
 
-      <Divider />
+      <Divider className="bg-gray-700/50" />
 
       <CardBody className="py-6">
         {authError && (
-          <div className="bg-danger-50 text-danger-700 p-4 rounded-lg mb-6 flex items-center gap-2">
+          <div className="bg-red-500/10 text-red-400p-4 rounded-lg mb-6 flex items-center gap-2">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
             <p>{authError}</p>
           </div>
@@ -96,11 +97,11 @@ export default function SignInForm() {
               id="identifier"
               type="email"
               placeholder="your.email@example.com"
-              startContent={<Mail className="h-4 w-4 text-default-500" />}
+              startContent={<Mail className="h-4 w-4 mr-2 text-default-500" />}
               isInvalid={!!errors.identifier}
               errorMessage={errors.identifier?.message}
               {...register("identifier")}
-              className="w-full"
+                className="w-full bg-gray-800/50 text-gray-100 border-gray-700/50 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
             />
           </div>
 
@@ -117,7 +118,7 @@ export default function SignInForm() {
               id="password"
               type={showPassword ? "text" : "password"}
               placeholder="••••••••"
-              startContent={<Lock className="h-4 w-4 text-default-500" />}
+              startContent={<Lock className=" mr-2 h-4 w-4 text-default-500" />}
               endContent={
                 <Button
                   isIconOnly
@@ -136,29 +137,30 @@ export default function SignInForm() {
               isInvalid={!!errors.password}
               errorMessage={errors.password?.message}
               {...register("password")}
-              className="w-full"
+              className="w-full bg-gray-800/50 text-gray-100 border-gray-700/50 focus:ring-indigo-500 focus:border-indigo-500 rounded-lg"
             />
           </div>
-
+  <div className=" flex justify-center">
           <Button
             type="submit"
             color="primary"
-            className="w-full"
+             className=" justify-center w-40 rounded-2xl bg-gradient-to-r p-2 from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] border-0"
             isLoading={isSubmitting}
           >
             {isSubmitting ? "Signing in..." : "Sign In"}
           </Button>
+          </div>
         </form>
       </CardBody>
 
-      <Divider />
+      <Divider className="bg-gray-700/50" />
 
       <CardFooter className="flex justify-center py-4">
         <p className="text-sm text-default-600">
           Don&#39;t have an account?{" "}
           <Link
             href="/sign-up"
-            className="text-primary hover:underline font-medium"
+           className="text-indigo-400 hover:text-indigo-300 hover:underline font-medium"
           >
             Sign up
           </Link>
