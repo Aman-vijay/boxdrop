@@ -40,7 +40,7 @@ export default async function Dashboard() {
         />
       </main>
 
-      <footer className="bg-default-50 border-t border-default-200 py-6">
+      <footer className=" border-t border-default-200 py-6 bg-gray-900 text-white ">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
