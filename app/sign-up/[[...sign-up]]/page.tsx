@@ -1,6 +1,7 @@
 import SignUpForm from "@/components/SignUpForm";
 import Navbar from "@/components/Navbar";
-import { CloudUpload } from "lucide-react";
+import Footer from "@/components/Footer";
+
 
 
 export default function SignUpPage() {
@@ -21,19 +22,7 @@ export default function SignUpPage() {
 
       {/* Footer */}
        
-      <footer className=" border-t border-default-200 py-6 bg-gray-900 text-white ">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <CloudUpload className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-bold">BoxDrop</h2>
-            </div>
-            <p className="text-default-500 text-sm">
-              &copy; {new Date().getFullYear()} BoxDrop
-            </p>
-          </div>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
