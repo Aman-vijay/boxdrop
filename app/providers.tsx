@@ -8,6 +8,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ImageKitProvider } from "imagekitio-next";
 import { ToastProvider } from "@heroui/toast";
 import { createContext, useContext } from "react";
+import { UserProvider } from "./context/UserContext";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -52,7 +53,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
       >
         <ImageKitAuthContext.Provider value={{ authenticate: authenticator }}>
           <ToastProvider placement="top-right" />
-          <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+          <NextThemesProvider {...themeProps}><UserProvider>
+              {children}
+            </UserProvider></NextThemesProvider>
         </ImageKitAuthContext.Provider>
       </ImageKitProvider>
     </HeroUIProvider>

@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Providers } from "./providers";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import {ClerkProvider} from "@clerk/nextjs";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import {ClerkProvider} from "@clerk/nextjs"
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -25,7 +28,13 @@ export default function RootLayout({
         <body
           className={`${inter.variable} antialiased bg-background text-foreground`}
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            <div className="min-h-screen flex flex-col">
+              <Navbar />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </Providers>
         </body>
       </html>
     </ClerkProvider>
