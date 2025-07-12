@@ -1,14 +1,11 @@
 import SignUpForm from "@/components/SignUpForm";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 
 
 export default function SignUpPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-gray-100">
-      <Navbar />
-
+   
       <main className="flex-1 flex justify-center items-center p-6 relative overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
@@ -20,9 +17,6 @@ export default function SignUpPage() {
         <SignUpForm />
       </main>
 
-      {/* Footer */}
-       
-      <Footer/>
     </div>
   );
 }

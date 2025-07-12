@@ -1,12 +1,10 @@
 import SignInForm from "@/components/SignInForm";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+
 
 export default function SignInPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-gray-100">
-      {/* Use the unified Navbar component */}
-      <Navbar />
+     
 
       <main className="flex-1 flex justify-center items-center p-6 relative overflow-hidden">
         {/* Background Effects */}
@@ -19,8 +17,7 @@ export default function SignInPage() {
       </main>
 
       {/* Dark mode footer */}
-      
-      <Footer/>
+  
     </div>
   );
 }

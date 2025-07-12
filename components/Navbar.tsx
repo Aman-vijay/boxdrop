@@ -13,27 +13,19 @@ import {
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { useState, useEffect, useRef } from "react";
+import { useGlobalUser } from "../app/context/UserContext";
 
-interface SerializedUser {
-  id: string;
-  firstName?: string | null;
-  lastName?: string | null;
-  imageUrl?: string | null;
-  username?: string | null;
-  emailAddress?: string | null;
-}
 
-interface NavbarProps {
-  user?: SerializedUser | null;
-}
 
-export default function Navbar({ user }: NavbarProps) {
+export default function Navbar() {
   const { signOut } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const { user } = useGlobalUser();
+
 
   // Check if we're on the dashboard page
   const isOnDashboard =
@@ -129,7 +121,7 @@ export default function Navbar({ user }: NavbarProps) {
 
   return (
     <header
-      className={`bg-gray-950/80 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50 transition-all duration-300 ${
+      className={`bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50 transition-all duration-300 ${
         isScrolled ? "shadow-lg shadow-gray-900/20" : ""
       }`}
     >

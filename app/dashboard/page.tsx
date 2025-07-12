@@ -1,46 +1,24 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useGlobalUser } from "../context/UserContext";
 import DashboardContent from "@/components/DashboardContent";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
-export default async function Dashboard() {
-  const { userId } = await auth();
-  const user = await currentUser();
 
-  if (!userId) {
-    redirect("/sign-in");
-  }
+export default function ClientDashboard() {
+  const { user } = useGlobalUser();
 
-  // Serialize the user data to avoid passing the Clerk User object directly
-  const serializedUser = user
-    ? {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        imageUrl: user.imageUrl,
-        username: user.username,
-        emailAddress: user.emailAddresses?.[0]?.emailAddress,
-      }
-    : null;
+  if (!user) return null; // Optional: You could show a spinner or redirect client-side
 
   return (
     <div className="min-h-screen flex flex-col bg-default-50">
-      <Navbar user={serializedUser} />
-
+     
       <main className="flex-1 container mx-auto py-8 px-6">
         <DashboardContent
-          userId={userId}
-          userName={
-            user?.firstName ||
-            user?.fullName ||
-            user?.emailAddresses?.[0]?.emailAddress ||
-            ""
-          }
+          userId={user.id}
+          userName={user.firstName || user.username || user.emailAddress || ""}
         />
       </main>
-
-      <Footer/>
+    
     </div>
   );
 }
