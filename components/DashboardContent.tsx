@@ -44,21 +44,18 @@ export default function DashboardContent({
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="text-4xl font-bold text-default-900">
-          Hi,{" "}
-          <span className="text-primary">
-            {userName?.length > 10
-              ? `${userName?.substring(0, 10)}...`
-              : userName?.split(" ")[0] || "there"}
+<div className="mb-10">
+        <h2 className="text-4xl font-bold text-white leading-tight">
+          Welcome,
+          <span className="ml-2 bg-gradient-to-r from-indigo-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+            {userName.length > 10 ? `${userName.slice(0, 10)}...` : userName.split(" ")[0]}
           </span>
           !
         </h2>
-        <p className="text-default-600 mt-2 text-lg">
-          Your images are waiting for you.
+        <p className="text-gray-400 mt-2 text-lg">
+          Your personal cloud dashboard is ready.
         </p>
       </div>
-
       <Tabs
         aria-label="Dashboard Tabs"
         color="primary"
@@ -66,61 +63,61 @@ export default function DashboardContent({
         selectedKey={activeTab}
         onSelectionChange={(key) => setActiveTab(key as string)}
         classNames={{
-          tabList: "gap-6",
-          tab: "py-3",
-          cursor: "bg-primary",
+          tabList: "gap-6 border-b border-gray-700/50",
+          tab: "py-3 text-white hover:text-indigo-400 transition-colors",
+          cursor: "bg-indigo-500",
         }}
       >
         <Tab
           key="files"
           title={
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <FileText className="h-5 w-5" />
-              <span className="font-medium">My Files</span>
+              <span>My Files</span>
             </div>
           }
         >
-          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileUp className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Upload</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileUploadForm
-                    userId={userId}
-                    onUploadSuccess={handleFileUploadSuccess}
-                    currentFolder={currentFolder}
-                  />
-                </CardBody>
-              </Card>
-            </div>
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+             <Card className="border border-gray-700 bg-gray-900/50 backdrop-blur-md shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader className="flex gap-3">
+                <FileUp className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-xl font-semibold text-white">Upload Files</h3>
+              </CardHeader>
+              <CardBody>
+                <FileUploadForm
+                  userId={userId}
+                  onUploadSuccess={handleFileUploadSuccess}
+                  currentFolder={currentFolder}
+                />
+              </CardBody>
+            </Card>
+       
 
-            <div className="lg:col-span-2">
-              <Card className="border border-default-200 bg-default-50 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader className="flex gap-3">
-                  <FileText className="h-5 w-5 text-primary" />
-                  <h2 className="text-xl font-semibold">Your Files</h2>
-                </CardHeader>
-                <CardBody>
-                  <FileList
-                    userId={userId}
-                    refreshTrigger={refreshTrigger}
-                    onFolderChange={handleFolderChange}
-                  />
-                </CardBody>
-              </Card>
+          
+               <Card className="lg:col-span-2 border border-gray-700 bg-gray-900/50 backdrop-blur-md shadow-md hover:shadow-lg transition-shadow">
+              <CardHeader className="flex gap-3">
+                <FileText className="h-5 w-5 text-indigo-400" />
+                <h3 className="text-xl font-semibold text-white">Your Files</h3>
+              </CardHeader>
+              <CardBody>
+                <FileList
+                  userId={userId}
+                  refreshTrigger={refreshTrigger}
+                  onFolderChange={handleFolderChange}
+                />
+              </CardBody>
+            </Card>
             </div>
-          </div>
+       
         </Tab>
 
         <Tab
           key="profile"
           title={
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              <span className="font-medium">Profile</span>
+              <span>Profile</span>
             </div>
           }
         >
