@@ -2,9 +2,10 @@ import {db} from "@/lib/db";
 import {files} from "@/lib/db/schema"
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest,NextResponse } from "next/server";
-import {eq,and} from "drizzle-orm";
+import {eq,and,sum} from "drizzle-orm";
 import ImageKit from "imagekit";
-import {v4 as uuidv4} from "uuid"
+import {v4 as uuidv4} from "uuid";
+import { MAX_USER_STORAGE_BYTES } from "@/lib/utils";
 
 
 
@@ -27,6 +28,21 @@ try{
     const file=formData.get("file") as File
     const formUserId=formData.get("userId") as string
     const parentId = formData.get("parentId") as string || null
+
+    const [usageResult] = await db
+  .select({ used: sum(files.size) })
+  .from(files)
+  .where(eq(files.userId, userId));
+
+const currentUsage = typeof usageResult?.used === "number" ? usageResult.used : Number(usageResult?.used) || 0;
+
+if (currentUsage + file.size > MAX_USER_STORAGE_BYTES) {
+  return NextResponse.json(
+    { error: "Storage limit exceeded. Please delete files to upload more." },
+    { status: 400 }
+  );
+}
+
 
     //Match it with userId
 
