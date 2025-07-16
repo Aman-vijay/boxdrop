@@ -1,5 +1,5 @@
 import React from "react";
-import { LucideIcon, TriangleAlert } from "lucide-react"; // Imported TriangleAlert for default warning icon
+import { LucideIcon, TriangleAlert } from "lucide-react";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -23,33 +23,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   description,
   confirmText = "Confirm",
   cancelText = "Cancel",
-  confirmColor = "default", // Changed default to 'default' for safer neutral color
+  confirmColor = "default",
   onConfirm,
   isDangerous = false,
   warningMessage,
 }) => {
   if (!isOpen) return null;
 
- 
-  
-
-  const getConfirmButtonClasses = () => {
-    const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2";
-
-    switch (confirmColor) {
-      case "primary":
-        return `${baseClasses} bg-blue-600 text-white hover:bg-blue-700`;
-      case "danger":
-        return `${baseClasses} bg-red-600 text-white hover:bg-red-700`;
-      case "warning":
-        return `${baseClasses} bg-orange-600 text-white hover:bg-orange-700`;
-      case "success":
-        return `${baseClasses} bg-green-600 text-white hover:bg-green-700`;
-      default:
-        // Default color for general confirmation, less aggressive than danger
-        return `${baseClasses} bg-gray-700 text-white hover:bg-gray-800`;
-    }
-  };
+  const defaultWarningMessage =
+    "This action cannot be undone and will permanently remove your data.";
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -57,62 +39,66 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     }
   };
 
-  const defaultWarningMessage = "This action cannot be undone and will permanently remove your data."; // A more descriptive default warning
+  const getButtonStyle = (type: string) => {
+    const base = "px-5 py-2 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2";
+    switch (type) {
+      case "danger":
+        return `${base} bg-red-600 text-white hover:bg-red-700 focus:ring-red-500`;
+      case "primary":
+        return `${base} bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500`;
+      case "warning":
+        return `${base} bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500`;
+      case "success":
+        return `${base} bg-green-600 text-white hover:bg-green-700 focus:ring-green-500`;
+      default:
+        return `${base} bg-gray-700 text-white hover:bg-gray-600 focus:ring-gray-500`;
+    }
+  };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-lg transition-all duration-300 p-4"
       onClick={handleBackdropClick}
-      aria-modal="true"
       role="dialog"
-      aria-labelledby="confirmation-modal-title"
-      aria-describedby="confirmation-modal-description"
+      aria-modal="true"
     >
-      <div className="bg-white border border-gray-200 rounded-lg shadow-xl max-w-sm w-full mx-auto" onClick={e => e.stopPropagation()}>
+      <div
+        className="bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 border border-gray-700/50 text-white rounded-2xl shadow-2xl max-w-md w-full mx-auto transition-all duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center gap-3 p-4 border-b border-gray-200">
-         
-          <h2 id="confirmation-modal-title" className="text-xl font-semibold text-gray-900 flex-1">
-            {title}
-          </h2>
+        <div className="flex items-center gap-3 p-6 border-b border-gray-700/50">
+          <h2 className="text-xl font-semibold flex-1">{title}</h2>
         </div>
 
         {/* Body */}
-        <div className="p-4">
-          {isDangerous && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg mb-4 flex items-start gap-3">
-              <TriangleAlert className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" /> {/* Explicit warning icon */}
+        <div className="p-6">
+          {isDangerous ? (
+            <div className="bg-red-500/10 border border-red-600/30 text-red-400 p-4 rounded-xl flex gap-3 items-start">
+              <TriangleAlert className="h-5 w-5 mt-1 text-red-400" />
               <div>
-                <p className="font-semibold">Caution: Irreversible Action!</p>
-                <p id="confirmation-modal-description" className="text-sm mt-1">
+                <p className="font-semibold">Caution: Irreversible Action</p>
+                <p className="text-sm mt-1 text-red-300">
                   {warningMessage || defaultWarningMessage}
                 </p>
               </div>
             </div>
-          )}
-          {!isDangerous && (
-            <p id="confirmation-modal-description" className="text-gray-700 text-base">
-              {description}
-            </p>
+          ) : (
+            <p className="text-gray-300 text-base leading-relaxed">{description}</p>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-4 border-t border-gray-200">
+        <div className="flex justify-end gap-3 px-6 py-5 border-t border-gray-700/50">
           <button
-            className="px-5 py-2 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="px-5 py-2 rounded-xl font-medium text-gray-300 bg-gray-800 hover:bg-gray-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-600"
             onClick={() => onOpenChange(false)}
           >
             {cancelText}
           </button>
+
           <button
-            className={`${getConfirmButtonClasses()} focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-              confirmColor === "danger" ? "focus:ring-red-500" :
-              confirmColor === "primary" ? "focus:ring-blue-500" :
-              confirmColor === "warning" ? "focus:ring-orange-500" :
-              confirmColor === "success" ? "focus:ring-green-500" :
-              "focus:ring-gray-500"
-            }`}
+            className={getButtonStyle(confirmColor)}
             onClick={() => {
               onConfirm();
               onOpenChange(false);
