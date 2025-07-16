@@ -3,7 +3,7 @@
 import { useClerk, SignedIn, SignedOut } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { CloudUpload, ChevronDown, User, Menu, X, LogOut, Settings, Home } from "lucide-react";
+import { CloudUpload, ChevronDown, User, Menu, X ,Home,LogOut,Settings} from "lucide-react";
 import {
   Dropdown,
   DropdownTrigger,
@@ -13,19 +13,27 @@ import {
 import { Avatar } from "@heroui/avatar";
 import { Button } from "@heroui/button";
 import { useState, useEffect, useRef } from "react";
-import { useGlobalUser } from "../app/context/UserContext";
 
+interface SerializedUser {
+  id: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  imageUrl?: string | null;
+  username?: string | null;
+  emailAddress?: string | null;
+}
 
+interface NavbarProps {
+  user?: SerializedUser | null;
+}
 
-export default function Navbar() {
+export default function Navbar({ user }: NavbarProps) {
   const { signOut } = useClerk();
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
-  const { user } = useGlobalUser();
-
 
   // Check if we're on the dashboard page
   const isOnDashboard =
@@ -121,22 +129,18 @@ export default function Navbar() {
 
   return (
     <header
-      className={`bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 backdrop-blur-lg border-b border-gray-800/50 sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? "shadow-lg shadow-gray-900/20" : ""
-      }`}
+      className={`bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950  border-b border-gray-200  sticky top-0 z-50 transition-shadow ${isScrolled ? "shadow-sm" : ""}`}
     >
-      <div className="container mx-auto py-4 px-4 md:px-6 max-w-7xl">
+      <div className="container mx-auto py-3 md:py-4 px-4 md:px-6">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 z-10 group">
-            <div className="bg-gradient-to-r from-indigo-500 to-pink-500 p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <CloudUpload className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-white">BoxDrop</h1>
+          <Link href="/" className="flex text-gray-300 items-center gap-2 z-10">
+            <CloudUpload className="h-6 w-6 " />
+            <h1 className="text-xl  font-bold">BoxDrop</h1>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-3 items-center">
+          <div className="hidden md:flex gap-4 items-center">
             {/* Show these buttons when user is signed out */}
             <SignedOut>
               <Link href="/sign-in">
@@ -157,13 +161,13 @@ export default function Navbar() {
             </SignedOut>
 
             {/* Show these when user is signed in */}
-            <SignedIn>
+              <SignedIn>
               <div className="flex items-center gap-4">
                 {!isOnDashboard && (
                   <Link href="/dashboard">
                     <Button 
                       variant="bordered" 
-                      className="border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+                      className="border-2 p-3 rounded-2xl border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
                       startContent={<Home className="h-4 w-4" />}
                     >
                       Dashboard
@@ -176,30 +180,28 @@ export default function Navbar() {
                   }}
                 >
                   <DropdownTrigger>
-                    <Button
-                      variant="flat"
-                      className="p-0 bg-gray-800/50 hover:bg-gray-700/50 min-w-0 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-300"
-                      endContent={<ChevronDown className="h-4 w-4 ml-2 text-gray-400" />}
-                    >
-                      <div className="flex items-center gap-3 px-3 py-2">
-                        <Avatar
-                          name={userDetails.initials}
-                          size="sm"
-                          src={user?.imageUrl || undefined}
-                          className="h-8 w-8 flex-shrink-0 ring-2 ring-gray-600/50"
-                          fallback={
-                            <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
-                              <User className="h-4 w-4 text-white" />
-                            </div>
-                          }
-                        />
-                        <span className="text-gray-300 font-medium hidden sm:inline">
-                          {userDetails.displayName}
-                        </span>
-                      </div>
-                    </Button>
+                  <Button
+  variant="flat"
+  className="group hover:bg-indigo-500/10 hover:border-indigo-400/50 border border-gray-700/50 bg-gray-800/30 backdrop-blur-sm rounded-2xl transition-all duration-300 ease-in-out"
+  endContent={
+    <ChevronDown 
+      className="h-4 w-4 ml-2 text-gray-400 group-hover:text-indigo-300 transition-colors duration-300" 
+    />
+  }
+>
+  <div className="flex items-center gap-3 px-3 py-2">
+   
+      <div className="bg-gradient-to-r from-indigo-500 ring-gray-600/50 to-pink-500 h-full w-full flex  rounded-full items-center justify-center">
+        <User className="h-4 w-4 text-white " />
+      </div>
+
+    <span className="text-gray-200 font-medium text-sm sm:text-base hidden sm:inline group-hover:text-indigo-200 transition-colors duration-300">
+      {userDetails.displayName}
+    </span>
+  </div>
+</Button>
                   </DropdownTrigger>
-                  <DropdownMenu 
+                   <DropdownMenu 
                     aria-label="User actions"
                     classNames={{
                       list: "p-2",
@@ -209,8 +211,9 @@ export default function Navbar() {
                       key="profile"
                       description={userDetails.email || "View your profile"}
                       onClick={() => router.push("/dashboard?tab=profile")}
-                      startContent={<Settings className="h-4 w-4" />}
+                         startContent={<Settings className="h-4 w-4" />}
                       className="text-gray-300 hover:bg-gray-800/50 rounded-lg data-[hover=true]:bg-gray-800/50"
+                    
                     >
                       Profile
                     </DropdownItem>
@@ -218,7 +221,7 @@ export default function Navbar() {
                       key="files"
                       description="Manage your files"
                       onClick={() => router.push("/dashboard")}
-                      startContent={<Home className="h-4 w-4" />}
+                        startContent={<Home className="h-4 w-4" />}
                       className="text-gray-300 hover:bg-gray-800/50 rounded-lg data-[hover=true]:bg-gray-800/50"
                     >
                       My Files
@@ -239,19 +242,19 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="md:hidden flex items-center gap-2">
             <SignedIn>
               <Avatar
                 name={userDetails.initials}
                 size="sm"
                 src={user?.imageUrl || undefined}
-                className="h-8 w-8 flex-shrink-0 ring-2 ring-gray-600/50"
-                fallback={
+                className="h-8 w-8 flex-shrink-0 ing-2 ring-gray-600/50"
+                               fallback={
                   <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
                     <User className="h-4 w-4 text-white" />
                   </div>
                 }
-              />
+             />
             </SignedIn>
             <button
               className="z-50 p-2 hover:bg-gray-800/50 rounded-lg transition-colors duration-300"
@@ -270,7 +273,7 @@ export default function Navbar() {
           {/* Mobile Menu Overlay */}
           {isMobileMenuOpen && (
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm  z-40 md:hidden"
               onClick={() => setIsMobileMenuOpen(false)}
               aria-hidden="true"
             />
@@ -279,7 +282,7 @@ export default function Navbar() {
           {/* Mobile Menu */}
           <div
             ref={mobileMenuRef}
-            className={`fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-gray-900/95 backdrop-blur-xl border-l border-gray-800/50 z-40 flex flex-col pt-20 px-6 shadow-2xl transition-transform duration-300 ease-in-out ${
+            className={`fixed top-0 right-0 bottom-0 w-4/5 max-w-sm bg-gray-900/95 backdrop-blur-xl border-l border-gray-800/50 z-40 flex flex-col pt-20 px-6 shadow-xl transition-transform duration-300 ease-in-out ${
               isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
             } md:hidden`}
           >
@@ -290,10 +293,10 @@ export default function Navbar() {
                   className="w-full"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Button 
-                    variant="bordered" 
-                    className="w-full border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
-                  >
+                 <Button 
+                variant="bordered" 
+                className="w-full border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+              >
                     Sign In
                   </Button>
                 </Link>
@@ -302,9 +305,10 @@ export default function Navbar() {
                   className="w-full"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Button 
-                    className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 border-0"
-                  >
+                 <Button 
+                variant="bordered" 
+                className="w-full border-2 border-gray-600 hover:border-indigo-400 hover:bg-indigo-400/10 text-gray-300 hover:text-white transition-all duration-300 font-medium"
+              >
                     Sign Up
                   </Button>
                 </Link>
@@ -314,54 +318,48 @@ export default function Navbar() {
             <SignedIn>
               <div className="flex flex-col gap-6">
                 {/* User info */}
-                <div className="flex items-center gap-4 py-6 border-b border-gray-800/50">
-                  <Avatar
-                    name={userDetails.initials}
-                    size="md"
-                    src={user?.imageUrl || undefined}
-                    className="h-12 w-12 flex-shrink-0 ring-2 ring-gray-600/50"
-                    fallback={
-                      <div className="bg-gradient-to-r from-indigo-500 to-pink-500 h-full w-full flex items-center justify-center">
-                        <User className="h-6 w-6 text-white" />
-                      </div>
-                    }
-                  />
+                <div className="flex items-center gap-3 py-4 border-b border-gray-800/50">
+                 
+                  <div className="bg-gradient-to-r from-indigo-500 to-pink-500  ring-2 ring-gray-600/50  flex items-center justify-center">
+                    <User className="h-6 w-6 text-white rouded-full" />
+                  </div>
+               
                   <div>
-                    <p className="font-semibold text-white">{userDetails.displayName}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="font-medium">{userDetails.displayName}</p>
+                    <p className="text-sm text-gray-500">
                       {userDetails.email}
                     </p>
                   </div>
                 </div>
 
                 {/* Navigation links */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-4">
                   {!isOnDashboard && (
                     <Link
                       href="/dashboard"
-                      className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
+                       className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <Home className="h-5 w-5" />
+                       <Home className="h-5 w-5" />
                       Dashboard
                     </Link>
                   )}
                   <Link
                     href="/dashboard?tab=profile"
-                    className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
+                   className="flex items-center gap-3 py-3 px-4 hover:bg-gray-800/50 rounded-lg transition-colors duration-300 text-gray-300 hover:text-white"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Settings className="h-5 w-5" />
                     Profile
                   </Link>
                   <button
-                    className="flex items-center gap-3 py-3 px-4 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-300 mt-4"
+                   className="flex items-center gap-3 py-3 px-4 text-left text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-300 mt-4"
                     onClick={() => {
                       setIsMobileMenuOpen(false);
                       handleSignOut();
                     }}
                   >
-                    <LogOut className="h-5 w-5" />
+                       <LogOut className="h-5 w-5" />
                     Sign Out
                   </button>
                 </div>
