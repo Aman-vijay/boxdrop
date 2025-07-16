@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef,useEffect } from "react";
 import { Button } from "@heroui/button";
 import { Progress } from "@heroui/progress";
 import { Input } from "@heroui/input";
@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   FolderPlus,
   ArrowRight,
+   HardDrive, 
 } from "lucide-react";
 import { addToast } from "@heroui/toast";
 import {
@@ -28,6 +29,7 @@ interface FileUploadFormProps {
   currentFolder?: string | null;
 }
 
+
 export default function FileUploadForm({
   userId,
   onUploadSuccess,
@@ -39,24 +41,55 @@ export default function FileUploadForm({
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Folder creation state
   const [folderModalOpen, setFolderModalOpen] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [creatingFolder, setCreatingFolder] = useState(false);
+  const [storageUsed, setStorageUsed] = useState<number>(0);
+  const [storageLimit, setStorageLimit] = useState<number>(5 * 1024 * 1024 * 10);
+  const [storageReady, setStorageReady] = useState(false);
+
+  useEffect(() => {
+    async function fetchStorageUsage() {
+      try {
+        const res = await axios.get("/api/storage-usage");
+        setStorageUsed(res.data.used);
+        setStorageLimit(res.data.limit);
+        setStorageReady(true);
+      } catch (err) {
+        console.error("Failed to fetch storage usage", err);
+        setError("Unable to fetch storage data. Please refresh.");
+      }
+    }
+    fetchStorageUsage();
+  }, []);
+
+  const percentUsed = Math.min(
+    Math.round((storageUsed / storageLimit) * 100),
+    100
+  );
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
+    if (!e.target.files || !e.target.files[0]) return;
 
-      // Validate file size (5MB limit)
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        setError("File size exceeds 5MB limit");
-        return;
-      }
+    const selectedFile = e.target.files[0];
 
-      setFile(selectedFile);
-      setError(null);
+    if (!storageReady) {
+      setError("Please wait, storage usage is still loading.");
+      return;
     }
+
+    if (selectedFile.size > 5 * 1024 * 1024) {
+      setError("File size exceeds 5MB limit");
+      return;
+    }
+
+    if (storageUsed + selectedFile.size > storageLimit) {
+      setError("Uploading this file would exceed your storage limit.");
+      return;
+    }
+
+    setFile(selectedFile);
+    setError(null);
   };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -64,9 +97,13 @@ export default function FileUploadForm({
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const droppedFile = e.dataTransfer.files[0];
 
-      // Validate file size (5MB limit)
       if (droppedFile.size > 5 * 1024 * 1024) {
         setError("File size exceeds 5MB limit");
+        return;
+      }
+
+      if (!storageReady || storageUsed + droppedFile.size > storageLimit) {
+        setError("Uploading this file would exceed your storage limit.");
         return;
       }
 
@@ -122,12 +159,13 @@ export default function FileUploadForm({
         color: "success",
       });
 
-      // Clear the file after successful upload
       clearFile();
 
-      // Call the onUploadSuccess callback if provided
       if (onUploadSuccess) {
         onUploadSuccess();
+        const res = await axios.get("/api/storage-usage");
+        setStorageUsed(res.data.used);
+        setStorageLimit(res.data.limit);
       }
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -163,17 +201,18 @@ export default function FileUploadForm({
 
       addToast({
         title: "Folder Created",
-        description: `Folder "${folderName}" has been created successfully.`,
+        description: `Folder \"${folderName}\" has been created successfully.`,
         color: "success",
       });
 
-      // Reset folder name and close modal
       setFolderName("");
       setFolderModalOpen(false);
 
-      // Call the onUploadSuccess callback to refresh the file list
       if (onUploadSuccess) {
         onUploadSuccess();
+        const res = await axios.get("/api/storage-usage");
+        setStorageUsed(res.data.used);
+        setStorageLimit(res.data.limit);
       }
     } catch (error) {
       console.error("Error creating folder:", error);
@@ -190,6 +229,28 @@ export default function FileUploadForm({
   return (
     <div className="space-y-4">
       {/* Action buttons */}
+      <div className="space-y-2">
+  <div className="flex justify-between items-center text-xs text-default-500">
+    <span className="flex items-center gap-1 text-default-600">
+      <HardDrive className="h-4 w-4" /> Storage
+    </span>
+    <span>
+      {(storageUsed / (1024 * 1024)).toFixed(1)} MB / {(storageLimit / (1024 * 1024)).toFixed(1)} MB
+    </span>
+  </div>
+  <Progress
+    value={percentUsed}
+    size="sm"
+    color={
+      percentUsed >= 95 ? "danger" :
+      percentUsed >= 80 ? "warning" :
+      "primary"
+    }
+    showValueLabel
+    className="w-full"
+  />
+</div>
+
       <div className="flex gap-2 mb-2">
         <Button
           color="primary"
