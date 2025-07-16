@@ -199,7 +199,7 @@ export default function FileList({
   };
 
   const handleEmptyTrash = async () => {
-    try {
+    try { 
       await axios.delete(`/api/files/empty-trash`);
 
       // Remove all trashed files from local state
@@ -423,7 +423,7 @@ export default function FileList({
           shadow="sm"
           className="border border-default-200 bg-default-50 overflow-hidden"
         >
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
             <Table
               aria-label="Files table"
               isStriped
