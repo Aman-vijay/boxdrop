@@ -13,7 +13,7 @@ const inter = Inter({
 
 
 export const metadata: Metadata = {
-  title: "DropBox",
+  title: "BoxDrop",
   description: "For storing ",
 };
 
