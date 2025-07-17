@@ -281,7 +281,7 @@ export default function FileUploadForm({
             ? "border-danger/30 bg-danger/5"
             : file
               ? "border-primary/30 bg-primary/5"
-              : "border-default-300 hover:border-primary/5"
+              : "border-gray-300 hover:border-primary/5"
         }`}
       >
         {!file ? (
@@ -372,7 +372,7 @@ export default function FileUploadForm({
       </div>
 
       {/* Upload tips */}
-      <div className="bg-default-100/5 p-4 rounded-lg">
+      <div className="bg-gray-100/5 p-4 rounded-lg">
         <h4 className="text-sm font-medium mb-2">Tips</h4>
         <ul className="text-xs text-default-600 space-y-1">
           <li>• Images are private and only visible to you</li>
@@ -382,56 +382,62 @@ export default function FileUploadForm({
       </div>
 
       {/* Create Folder Modal */}
-      <Modal
-        isOpen={folderModalOpen}
-        onOpenChange={setFolderModalOpen}
-        backdrop="blur"
-        classNames={{
-          base: "border border-default-200 bg-default-5",
-          header: "border-b border-default-200",
-          footer: "border-t border-default-200",
-        }}
+     <Modal
+  isOpen={folderModalOpen}
+  onOpenChange={setFolderModalOpen}
+  backdrop="blur"
+  classNames={{
+    base: "bg-[#1e1e2f] border border-gray-800 shadow-xl rounded-2xl",
+    header: "border-b border-gray-700 text-white",
+    body: "text-gray-300",
+    footer: "border-t border-gray-700",
+  }}
+>
+  <ModalContent>
+    <ModalHeader className="flex items-center gap-4 text-lg font-semibold">
+      <FolderPlus className="h-5 w-5 text-primary" />
+      <span>New Folder</span>
+    </ModalHeader>
+
+    <ModalBody>
+      <div className="space-y-4">
+        <label htmlFor="folder-name" className=" text-gray-400">
+          Folder Name
+        </label>
+        <input
+          id="folder-name"
+          type="text"
+          placeholder="e.g. Project Assets"
+          value={folderName}
+          onChange={(e) => setFolderName(e.target.value)}
+          autoFocus
+          className="w-full my-4 px-2 py-1 rounded-lg border border-gray-700 bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
+        />
+      </div>
+    </ModalBody>
+
+    <ModalFooter>
+      <Button
+        variant="ghost"
+        className="text-gray-400 hover:text-white"
+        onClick={() => setFolderModalOpen(false)}
       >
-        <ModalContent>
-          <ModalHeader className="flex gap-2 items-center">
-            <FolderPlus className="h-5 w-5 text-primary" />
-            <span>New Folder</span>
-          </ModalHeader>
-          <ModalBody>
-            <div className="space-y-4">
-              <p className="text-sm text-default-600">
-                Enter a name for your folder:
-              </p>
-              <Input
-                type="text"
-                label="Folder Name"
-                placeholder="My Images"
-                value={folderName}
-                onChange={(e) => setFolderName(e.target.value)}
-                autoFocus
-              />
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="flat"
-              color="default"
-              onClick={() => setFolderModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              onClick={handleCreateFolder}
-              isLoading={creatingFolder}
-              isDisabled={!folderName.trim()}
-              endContent={!creatingFolder && <ArrowRight className="h-4 w-4" />}
-            >
-              Create
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        Cancel
+      </Button>
+      <Button
+        color="primary"
+        onClick={handleCreateFolder}
+        isLoading={creatingFolder}
+        isDisabled={!folderName.trim()}
+        className="bg-primary text-white hover:bg-primary/90"
+        endContent={!creatingFolder && <ArrowRight className="h-4 w-4" />}
+      >
+        Create
+      </Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+
     </div>
   );
 }

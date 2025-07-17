@@ -448,7 +448,7 @@ export default function FileList({
                 {filteredFiles.map((file) => (
                   <TableRow
                     key={file.id}
-                    className={`hover:bg-default-100 transition-colors ${
+                    className={`hover:bg-gray-700/50 transition-colors ${
                       file.isFolder || file.type.startsWith("image/")
                         ? "cursor-pointer"
                         : ""
